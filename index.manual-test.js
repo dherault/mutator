@@ -13,8 +13,9 @@ const results = mutator(
       dimension: 'scalar',
     },
   ],
-  'scalar',
+  mutator.dimensionLess,
   Object.values(mutator.operations),
+  3
 )
 
 console.log('results', results)

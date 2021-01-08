@@ -27,6 +27,7 @@ const operations = {
     dimensionConditionFn: (dimA, dimB) => dimA === dimB,
     dimensionResultFn: dimA => dimA,
     resultFn: (a, b) => a + b,
+    trivialityFn: () => false,
   },
   soustraction: {
     name: 'soustraction',
@@ -34,6 +35,7 @@ const operations = {
     dimensionConditionFn: (dimA, dimB) => dimA === dimB,
     dimensionResultFn: dimA => dimA,
     resultFn: (a, b) => a - b,
+    trivialityFn: (inputA, inputB) => inputA.name === inputB.name,
   },
   multiplication: {
     name: 'multiplication',
@@ -41,6 +43,7 @@ const operations = {
     dimensionConditionFn: () => true,
     dimensionResultFn: (dimA, dimB) => multiplyDimensions(dimA, dimB),
     resultFn: (a, b) => a * b,
+    trivialityFn: () => false,
   },
   division: {
     name: 'division',
@@ -48,14 +51,29 @@ const operations = {
     dimensionConditionFn: (dimA, dimB, a, b) => b !== 0,
     dimensionResultFn: (dimA, dimB) => divideDimensions(dimA, dimB),
     resultFn: (a, b) => a / b,
+    trivialityFn: (inputA, inputB) => inputA.name === inputB.name,
   },
+}
+
+const initialInput = {
+  value: 'root',
+  dimension: dimensionLess,
+}
+
+const noop = {
+  name: 'noop',
+  symbol: 'noop',
+  dimensionConditionFn: () => false,
+  dimensionResultFn: () => null,
+  resultFn: () => null,
+  trivialityFn: () => false,
 }
 
 function mutator(inputs, endDimension, allowedOperations, maxDepth = 3) {
   // console.log('allowOperations', allowedOperations)
   const tree = createTree(
-    { value: 'root', dimension: dimensionLess },
-    'none',
+    initialInput,
+    noop,
     inputs,
     endDimension,
     allowedOperations,
@@ -63,9 +81,14 @@ function mutator(inputs, endDimension, allowedOperations, maxDepth = 3) {
     maxDepth
   )
 
-  let results = walkTree(tree, (node, accumulator, operation) => {
+  console.log('tree', JSON.stringify(tree, null, 2))
+
+  const paths = new Set()
+  const results = []
+
+  walkTree(tree, (node, accumulator, operation) => {
     if (accumulator === null) return accumulator
-    if (operation === 'none') return accumulator
+    if (operation.name === 'noop') return accumulator
     if (!operation.dimensionConditionFn(node.dimension, accumulator.dimension, node.value, accumulator.value)) return null
 
     return {
@@ -74,17 +97,19 @@ function mutator(inputs, endDimension, allowedOperations, maxDepth = 3) {
       path: `${node.name} ${operation.symbol} (${accumulator.path})`,
     }
   })
-  .filter(result => result !== null)
-  .map(result => simplifyDimensions(result))
-  .filter(result => result.dimension === endDimension)
+  .filter(accumulator => accumulator !== null)
+  .map(accumulator => simplifyDimensions(accumulator))
+  .filter(accumulator => accumulator.dimension === endDimension)
+  .forEach(accumulator => {
+    if (paths.has(accumulator.path)) return
 
-  // console.log('tree', JSON.stringify(tree, null, 2))
-  // tree.children.forEach(child => {
-  //   console.log('child', child)
-  // })
-  console.log('results', JSON.stringify(results, null, 2))
+    delete accumulator.dimension
 
-  return []
+    paths.add(accumulator.path)
+    results.push(accumulator)
+  })
+
+  return results
 }
 
 function createTree(node, operation, inputs, endDimension, allowedOperations, depth, maxDepth) {
@@ -96,24 +121,27 @@ function createTree(node, operation, inputs, endDimension, allowedOperations, de
 
   if (depth === maxDepth) return tree
 
-  if (depth === maxDepth - 1) {
-    inputs.forEach(input => {
-      tree.children.push(
-        createTree(
-          input,
-          'none',
-          inputs,
-          endDimension,
-          allowedOperations,
-          depth + 1,
-          maxDepth,
-        )
+  inputs.forEach(input => {
+    if (operation.trivialityFn(node, input)) return
+
+    tree.children.push(
+      createTree(
+        input,
+        noop,
+        inputs,
+        endDimension,
+        allowedOperations,
+        depth + 1,
+        maxDepth,
       )
-    })
-  }
-  else {
+    )
+  })
+
+  if (depth < maxDepth - 1) {
     inputs.forEach(input => {
       allowedOperations.forEach(operation => {
+        if (operation.trivialityFn(node, input)) return
+
         tree.children.push(
           createTree(
             input,
@@ -136,7 +164,8 @@ function createTree(node, operation, inputs, endDimension, allowedOperations, de
 function walkTree(tree, fn) {
   if (!tree.children.length) {
     return {
-      ...tree.node,
+      value: tree.node.value,
+      dimension: tree.node.dimension,
       path: tree.node.name,
     }
   }
