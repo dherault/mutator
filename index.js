@@ -69,7 +69,13 @@ const noop = {
   trivialityFn: () => false,
 }
 
-function mutator(inputs, endDimension, allowedOperations, maxDepth = 3) {
+function mutator(
+  inputs,
+  endDimension, {
+    allowedOperations = Object.values(operations),
+    maxDepth = 3,
+    noEval = false,
+  } = {}) {
   // console.log('allowOperations', allowedOperations)
   const tree = createTree(
     initialInput,
@@ -84,29 +90,29 @@ function mutator(inputs, endDimension, allowedOperations, maxDepth = 3) {
   console.log('tree', JSON.stringify(tree, null, 2))
 
   const paths = new Set()
-  const results = []
+  let results = []
 
-  walkTree(tree, (node, accumulator, operation) => {
-    if (accumulator === null) return accumulator
-    if (operation.name === 'noop') return accumulator
-    if (!operation.dimensionConditionFn(node.dimension, accumulator.dimension, node.value, accumulator.value)) return null
-
-    return {
-      value: operation.resultFn(node.value, accumulator.value),
-      dimension: operation.dimensionResultFn(node.dimension, accumulator.dimension),
-      path: `${node.name} ${operation.symbol} (${accumulator.path})`,
-    }
-  })
+  walkTree(tree, accumulate)
+  .flat()
   .filter(accumulator => accumulator !== null)
   .map(accumulator => simplifyDimensions(accumulator))
-  .filter(accumulator => accumulator.dimension === endDimension)
+  // .filter(accumulator => accumulator.dimension === endDimension)
   .forEach(accumulator => {
     if (paths.has(accumulator.path)) return
 
     delete accumulator.dimension
+    delete accumulator.n
 
     paths.add(accumulator.path)
     results.push(accumulator)
+  })
+
+  results = results.map(accumulator => {
+    if (!noEval) {
+      accumulator.value = eval(replaceWithInputsValues(accumulator.path, inputs, allowedOperations))
+    }
+
+    return accumulator
   })
 
   return results
@@ -173,6 +179,67 @@ function walkTree(tree, fn) {
   const accumulators = tree.children.map(child => walkTree(child, fn)).flat()
 
   return accumulators.map(accumulator => fn(tree.node, accumulator, tree.operation))
+}
+
+function accumulate(node, accumulators, operation) {
+  let accumulatorArray = accumulators
+
+  if (!Array.isArray(accumulators)) accumulatorArray = [accumulators]
+
+  return accumulatorArray.map(accumulator => {
+    if (accumulator === null) return accumulator
+    if (operation.name === 'noop') return accumulator
+    if (!operation.dimensionConditionFn(node.dimension, accumulator.dimension, node.value, accumulator.value)) return null
+
+    const accumulatorChildren = [
+      {
+        dimension: operation.dimensionResultFn(node.dimension, accumulator.dimension),
+        path: `${node.name} ${operation.symbol} ${accumulator.path}`,
+        n: accumulator.n || 0,
+      },
+      {
+        dimension: operation.dimensionResultFn(node.dimension, accumulator.dimension),
+        path: `(${node.name} ${operation.symbol} ${accumulator.path}`,
+        n: accumulator.n ? accumulator.n + 1 : 1,
+      }
+    ]
+
+    if (accumulator.n && accumulator.n > 0) {
+      accumulatorChildren.push(
+        {
+          dimension: operation.dimensionResultFn(node.dimension, accumulator.dimension),
+          path: `${node.name} ${operation.symbol} ${accumulator.path})`,
+          n: accumulator.n - 1,
+        },
+        {
+          dimension: operation.dimensionResultFn(node.dimension, accumulator.dimension),
+          path: `${node.name}) ${operation.symbol} ${accumulator.path}`,
+          n: accumulator.n - 1,
+        }
+      )
+    }
+
+    return accumulatorChildren
+  })
+  .flat()
+}
+
+function replaceWithInputsValues(path, inputs, allowedOperations) {
+  return path
+  .split(' ')
+  .map(token => {
+    if (token === '(' || token === ')') return token
+    if (allowedOperations.find(operation => operation.symbol === token)) return token
+
+    const input = inputs.find(input => input.name === token)
+
+    if (input) return input.value
+
+    throw new Error('Unknown token') // TODO, check for spaces in inputs names and delete this line
+  })
+  .join(' ')
+
+
 }
 
 Object.assign(mutator, {

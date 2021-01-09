@@ -1,4 +1,6 @@
-const mutator = require('./index')
+const fs = require('fs')
+const path = require('path')
+const mutator = require('./index4')
 
 const results = mutator(
   [
@@ -14,8 +16,16 @@ const results = mutator(
     },
   ],
   mutator.dimensionLess,
-  Object.values(mutator.operations),
-  3
+  {
+    maxDepth: 4,
+    noEval: true,
+  }
 )
 
-console.log('results', results)
+// results.forEach(path => {
+//   if (path.startsWith('( x - 1 )')) console.log(path)
+// })
+// console.log('results', JSON.stringify(results, null, 2))
+// console.log('results', results)
+
+fs.writeFileSync(path.resolve(__dirname, 'output.json'), JSON.stringify(results, null, 2), 'utf-8')
