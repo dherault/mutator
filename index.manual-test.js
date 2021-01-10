@@ -9,11 +9,11 @@ const results = mutator(
       value: 1,
       dimension: 'scalar',
     },
-    {
-      name: 'y',
-      value: 2,
-      dimension: 'scalar',
-    },
+    // {
+    //   name: 'y',
+    //   value: 2,
+    //   dimension: 'scalar',
+    // },
   ],
   mutator.dimensionLess,
   {
@@ -27,5 +27,5 @@ const results = mutator(
 // })
 // console.log('results', JSON.stringify(results, null, 2))
 // console.log('results', results)
-
+console.log('results', results)
 fs.writeFileSync(path.resolve(__dirname, 'output.json'), JSON.stringify(results, null, 2), 'utf-8')

@@ -69,33 +69,36 @@ function mutator(
     noEval = false,
   } = {}
 ) {
-  const tree = createTree(
-    {
-      path: '',
-      a: [],
-      endWithInput: false,
-      areChildrenInputs: true,
-    },
-    [
-      ...inputs,
-      oneInput,
-    ],
-    allowedOperations,
-    maxDepth,
-  )
+  // const tree = createOperationTree(
+  //   {
+  //     path: '',
+  //     a: [],
+  //     endWithInput: false,
+  //     areChildrenInputs: true,
+  //   },
+  //   [
+  //     ...inputs,
+  //     oneInput,
+  //   ],
+  //   allowedOperations,
+  //   maxDepth,
+  // )
 
-  const validPaths = []
+  // const trees = []
 
-  walkTree(tree, node => {
-    if (node.a.length === 0 && node.endWithInput) {
-      validPaths.push(node.path.trim())
-    }
-  })
+  // walkTree(tree, node => {
+  //   if (node.a.length === 0 && node.endWithInput) {
+  //     const pathTree = createPathTree(node.path.trim())
 
-  return validPaths
+  //     trees.push(pathTree)
+  //   }
+  // })
+
+  // return trees
+  return createPathTree('( x + 1 ) * y - ( x - 1 ) + ( y * ( x + 1 ) * ( x - 1 * ( y + 1 ) ) )')
 }
 
-function createTree(
+function createOperationTree(
   node,
   inputs,
   operations,
@@ -108,40 +111,42 @@ function createTree(
   }
 
   if (depth >= maxDepth) {
-    if (node.a.length > 0 && node.a[node.a.length - 1] > 1) {
-      const nextA = node.a.slice()
+    if (node.a.length > 0 && node.a[node.a.length - 1].value > 1) {
+      const nextA = node.a.slice().map(item => ({ ...item }))
 
-      nextA.pop()
+      const { index } = nextA.pop()
 
       if (nextA.length > 0) {
-        nextA[nextA.length - 1]++
+        nextA[nextA.length - 1].value++
       }
 
-      tree.children.push(
-        createTree(
-          {
-            path: `${node.path} )`,
-            a: nextA,
-            endWithInput: true,
-            areChildrenInputs: false,
-          },
-          inputs,
-          operations,
-          maxDepth,
-          depth,
+      if (index > 0) {
+        tree.children.push(
+          createOperationTree(
+            {
+              path: `${node.path} )`,
+              a: nextA,
+              endWithInput: true,
+              areChildrenInputs: false,
+            },
+            inputs,
+            operations,
+            maxDepth,
+            depth,
+          )
         )
-      )
+      }
     }
   } else if (node.areChildrenInputs) {
     inputs.forEach(input => {
-      const nextA = node.a.slice()
+      const nextA = node.a.slice().map(item => ({ ...item }))
 
       if (nextA.length > 0) {
-        nextA[nextA.length - 1]++
+        nextA[nextA.length - 1].value++
       }
 
       tree.children.push(
-        createTree(
+        createOperationTree(
           {
             path: `${node.path} ${input.name}`,
             a: nextA,
@@ -156,15 +161,13 @@ function createTree(
       )
     })
 
-    // if (depth === 0) console.log(node)
+    if (node.a.length < maxDepth && depth + 1 < maxDepth) {
+      const nextA = node.a.slice().map(item => ({ ...item }))
 
-    if (!node.path.endsWith('(') && depth + 1 < maxDepth) {
-      const nextA = node.a.slice()
-
-      nextA.push(0)
+      nextA.push({ value: 0, index: depth })
 
       tree.children.push(
-        createTree(
+        createOperationTree(
           {
             path: `${node.path} (`,
             a: nextA,
@@ -182,7 +185,7 @@ function createTree(
   else {
     operations.forEach(operation => {
       tree.children.push(
-        createTree(
+        createOperationTree(
           {
             path: `${node.path} ${operation.symbol}`,
             a: node.a,
@@ -197,17 +200,17 @@ function createTree(
       )
     })
 
-    if (node.a.length > 0 && node.a[node.a.length - 1] > 1) {
-      const nextA = node.a.slice()
+    if (node.a.length > 0 && node.a[node.a.length - 1].value > 1) {
+      const nextA = node.a.slice().map(item => ({ ...item }))
 
       nextA.pop()
 
       if (nextA.length > 0) {
-        nextA[nextA.length - 1]++
+        nextA[nextA.length - 1].value++
       }
 
       tree.children.push(
-        createTree(
+        createOperationTree(
           {
             path: `${node.path} )`,
             a: nextA,
@@ -224,6 +227,46 @@ function createTree(
   }
 
   return tree
+}
+
+function createPathTree(path) {
+  const pathArray = path.split(' ')
+  const parenthesis = []
+
+  pathArray.forEach((token, index) => {
+    if (token === '(') {
+      parenthesis.unshift([index])
+    }
+    if (token === ')') {
+      let i
+
+      for (i = 0; i < parenthesis.length; i++) {
+        if (parenthesis[i].length < 2) break;
+      }
+
+      parenthesis[i].push(index)
+    }
+  })
+
+  let offset = 0
+
+  parenthesis.forEach(([minIndex, maxIndex], i) => {
+    const diff = maxIndex - minIndex
+    const parenthesisPathArray = pathArray.splice(minIndex, diff + 1 - offset)
+
+    parenthesisPathArray.shift()
+    parenthesisPathArray.pop()
+    pathArray.splice(minIndex, 0, parenthesisPathArray)
+
+    if (parenthesis[i + 1] && parenthesis[i + 1][1] > maxIndex) offset += diff
+    else offset = 0
+  })
+
+  return createPathTreeFromArray(pathArray)
+}
+
+function createPathTreeFromArray(pathArray) {
+
 }
 
 function walkTree(tree, fn) {
