@@ -23,6 +23,7 @@ const operations = {
   addition: {
     name: 'addition',
     symbol: '+',
+    priority: 1,
     dimensionConditionFn: (dimA, dimB) => dimA === dimB,
     dimensionResultFn: dimA => dimA,
     resultFn: (a, b) => a + b,
@@ -31,6 +32,7 @@ const operations = {
   soustraction: {
     name: 'soustraction',
     symbol: '-',
+    priority: 1,
     dimensionConditionFn: (dimA, dimB) => dimA === dimB,
     dimensionResultFn: dimA => dimA,
     resultFn: (a, b) => a - b,
@@ -39,6 +41,7 @@ const operations = {
   multiplication: {
     name: 'multiplication',
     symbol: '*',
+    priority: 2,
     dimensionConditionFn: () => true,
     dimensionResultFn: (dimA, dimB) => multiplyDimensions(dimA, dimB),
     resultFn: (a, b) => a * b,
@@ -47,6 +50,7 @@ const operations = {
   division: {
     name: 'division',
     symbol: '/',
+    priority: 2,
     dimensionConditionFn: (dimA, dimB, a, b) => b !== 0,
     dimensionResultFn: (dimA, dimB) => divideDimensions(dimA, dimB),
     resultFn: (a, b) => a / b,
@@ -95,7 +99,7 @@ function mutator(
   // })
 
   // return trees
-  return createPathTree('( x + 1 ) * y - ( x - 1 ) + ( y * ( x + 1 ) * ( x - 1 * ( y + 1 ) ) )')
+  return createPathTree('( x + 1 ) * y - ( x - 1 ) + ( y * ( x + 1 ) * ( x - 1 * ( y + 1 ) ) )', allowedOperations)
 }
 
 function createOperationTree(
@@ -229,7 +233,7 @@ function createOperationTree(
   return tree
 }
 
-function createPathTree(path) {
+function createPathTree(path, operations) {
   const pathArray = path.split(' ')
   const parenthesis = []
 
@@ -262,11 +266,58 @@ function createPathTree(path) {
     else offset = 0
   })
 
-  return createPathTreeFromArray(pathArray)
+  return createPathTreeFromArray(pathArray, operations)
 }
 
-function createPathTreeFromArray(pathArray) {
+function createPathTreeFromArray(pathArray, operations) {
+  console.log('pathArray', pathArray)
+  if (pathArray.length === 1) {
+    const [nextPathArray] = pathArray
 
+    if (Array.isArray(nextPathArray)) {
+      return createPathTreeFromArray(nextPathArray, operations)
+    }
+
+    return {
+      node: nextPathArray,
+      nodeType: 'variable',
+    }
+  }
+
+  const foundOperations = []
+
+  pathArray.forEach((token, index) => {
+    // const node = Array.isArray(token) ? createPathTreeFromArray(token) : token
+
+    const operation = operations.find(operation => token === operation.symbol)
+
+    if (operation) {
+      foundOperations.push({ index, operation })
+    }
+  })
+
+  foundOperations.sort((a, b) => a.operation.priority < b.operation.priority ? -1 : 1)
+
+  // console.log('foundOperations', foundOperations)
+
+  const { index,  operation } = foundOperations[0]
+
+  const left = pathArray.slice(0, index)
+  const right = pathArray.slice(index + 1)
+
+  // console.log('left', left)
+  // console.log('right', right)
+
+  const tree = {
+    node: operation,
+    nodeType: 'operation',
+    children: [
+      createPathTreeFromArray(left, operations),
+      createPathTreeFromArray(right, operations),
+    ],
+  }
+
+  return tree
 }
 
 function walkTree(tree, fn) {
