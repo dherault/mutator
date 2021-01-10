@@ -1,158 +1,1262 @@
-{
-  "node": {
-    "name": "soustraction",
-    "symbol": "-",
-    "priority": 1
+[
+  {
+    "hash": "(x + x)",
+    "dimension": "scalar",
+    "value": 4
   },
-  "nodeType": "operation",
-  "children": [
-    {
-      "node": {
-        "name": "multiplication",
-        "symbol": "*",
-        "priority": 2
-      },
-      "nodeType": "operation",
-      "children": [
-        {
-          "node": {
-            "name": "addition",
-            "symbol": "+",
-            "priority": 1
-          },
-          "nodeType": "operation",
-          "children": [
-            {
-              "node": "x",
-              "nodeType": "variable"
-            },
-            {
-              "node": "1",
-              "nodeType": "variable"
-            }
-          ]
-        },
-        {
-          "node": "y",
-          "nodeType": "variable"
-        }
-      ]
-    },
-    {
-      "node": {
-        "name": "addition",
-        "symbol": "+",
-        "priority": 1
-      },
-      "nodeType": "operation",
-      "children": [
-        {
-          "node": {
-            "name": "soustraction",
-            "symbol": "-",
-            "priority": 1
-          },
-          "nodeType": "operation",
-          "children": [
-            {
-              "node": "x",
-              "nodeType": "variable"
-            },
-            {
-              "node": "1",
-              "nodeType": "variable"
-            }
-          ]
-        },
-        {
-          "node": {
-            "name": "multiplication",
-            "symbol": "*",
-            "priority": 2
-          },
-          "nodeType": "operation",
-          "children": [
-            {
-              "node": "y",
-              "nodeType": "variable"
-            },
-            {
-              "node": {
-                "name": "multiplication",
-                "symbol": "*",
-                "priority": 2
-              },
-              "nodeType": "operation",
-              "children": [
-                {
-                  "node": {
-                    "name": "addition",
-                    "symbol": "+",
-                    "priority": 1
-                  },
-                  "nodeType": "operation",
-                  "children": [
-                    {
-                      "node": "x",
-                      "nodeType": "variable"
-                    },
-                    {
-                      "node": "1",
-                      "nodeType": "variable"
-                    }
-                  ]
-                },
-                {
-                  "node": {
-                    "name": "soustraction",
-                    "symbol": "-",
-                    "priority": 1
-                  },
-                  "nodeType": "operation",
-                  "children": [
-                    {
-                      "node": "x",
-                      "nodeType": "variable"
-                    },
-                    {
-                      "node": {
-                        "name": "multiplication",
-                        "symbol": "*",
-                        "priority": 2
-                      },
-                      "nodeType": "operation",
-                      "children": [
-                        {
-                          "node": "1",
-                          "nodeType": "variable"
-                        },
-                        {
-                          "node": {
-                            "name": "addition",
-                            "symbol": "+",
-                            "priority": 1
-                          },
-                          "nodeType": "operation",
-                          "children": [
-                            {
-                              "node": "y",
-                              "nodeType": "variable"
-                            },
-                            {
-                              "node": "1",
-                              "nodeType": "variable"
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
+  {
+    "hash": "(1 + 1)",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "((x + x) + (x + x))",
+    "dimension": "scalar",
+    "value": 8
+  },
+  {
+    "hash": "((x + x) + (x * 1))",
+    "dimension": "scalar",
+    "value": 6
+  },
+  {
+    "hash": "((x + x) + (1 * x))",
+    "dimension": "scalar",
+    "value": 6
+  },
+  {
+    "hash": "((x + x) + (x / 1))",
+    "dimension": "scalar",
+    "value": 6
+  },
+  {
+    "hash": "((x + x) + x)",
+    "dimension": "scalar",
+    "value": 6
+  },
+  {
+    "hash": "(x + (x + x))",
+    "dimension": "scalar",
+    "value": 6
+  },
+  {
+    "hash": "((1 + 1) + (1 + 1))",
+    "dimension": "_",
+    "value": 4
+  },
+  {
+    "hash": "((1 + 1) + (1 * 1))",
+    "dimension": "_",
+    "value": 3
+  },
+  {
+    "hash": "((1 + 1) + 1)",
+    "dimension": "_",
+    "value": 3
+  },
+  {
+    "hash": "(1 + (1 + 1))",
+    "dimension": "_",
+    "value": 3
+  },
+  {
+    "hash": "((x * x) + (x * x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "((x * 1) + (x + x))",
+    "dimension": "scalar",
+    "value": 6
+  },
+  {
+    "hash": "((x * 1) + (x * 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((x * 1) + (1 * x))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((x * 1) + (x / 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((x * 1) + x)",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "(x + (x * 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((1 * x) + (x + x))",
+    "dimension": "scalar",
+    "value": 6
+  },
+  {
+    "hash": "((1 * x) + (x * 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((1 * x) + (1 * x))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((1 * x) + (x / 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((1 * x) + x)",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "(x + (1 * x))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((1 * 1) + (1 + 1))",
+    "dimension": "_",
+    "value": 3
+  },
+  {
+    "hash": "((1 * 1) + (1 * 1))",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "((1 * 1) + 1)",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "(1 + (1 * 1))",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "((x / 1) + (x + x))",
+    "dimension": "scalar",
+    "value": 6
+  },
+  {
+    "hash": "((x / 1) + (x * 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((x / 1) + (1 * x))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((x / 1) + (x / 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((x / 1) + x)",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "(x + (x / 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((1 / x) + (1 / x))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 1
+  },
+  {
+    "hash": "((x + x) - (x * 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((x + x) - (1 * x))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((x + x) - (x / 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((x + x) - x)",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "(x - (x + x))",
+    "dimension": "scalar",
+    "value": -2
+  },
+  {
+    "hash": "((1 + 1) - (1 * 1))",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((1 + 1) - 1)",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "(1 - (1 + 1))",
+    "dimension": "_",
+    "value": -1
+  },
+  {
+    "hash": "((x * 1) - (x + x))",
+    "dimension": "scalar",
+    "value": -2
+  },
+  {
+    "hash": "((x * 1) - (1 * x))",
+    "dimension": "scalar",
+    "value": 0
+  },
+  {
+    "hash": "((x * 1) - (x / 1))",
+    "dimension": "scalar",
+    "value": 0
+  },
+  {
+    "hash": "((x * 1) - x)",
+    "dimension": "scalar",
+    "value": 0
+  },
+  {
+    "hash": "(x - (x * 1))",
+    "dimension": "scalar",
+    "value": 0
+  },
+  {
+    "hash": "((1 * x) - (x + x))",
+    "dimension": "scalar",
+    "value": -2
+  },
+  {
+    "hash": "((1 * x) - (x * 1))",
+    "dimension": "scalar",
+    "value": 0
+  },
+  {
+    "hash": "((1 * x) - (x / 1))",
+    "dimension": "scalar",
+    "value": 0
+  },
+  {
+    "hash": "((1 * x) - x)",
+    "dimension": "scalar",
+    "value": 0
+  },
+  {
+    "hash": "(x - (1 * x))",
+    "dimension": "scalar",
+    "value": 0
+  },
+  {
+    "hash": "((1 * 1) - (1 + 1))",
+    "dimension": "_",
+    "value": -1
+  },
+  {
+    "hash": "((1 * 1) - 1)",
+    "dimension": "_",
+    "value": 0
+  },
+  {
+    "hash": "(1 - (1 * 1))",
+    "dimension": "_",
+    "value": 0
+  },
+  {
+    "hash": "((x / 1) - (x + x))",
+    "dimension": "scalar",
+    "value": -2
+  },
+  {
+    "hash": "((x / 1) - (x * 1))",
+    "dimension": "scalar",
+    "value": 0
+  },
+  {
+    "hash": "((x / 1) - (1 * x))",
+    "dimension": "scalar",
+    "value": 0
+  },
+  {
+    "hash": "((x / 1) - x)",
+    "dimension": "scalar",
+    "value": 0
+  },
+  {
+    "hash": "(x - (x / 1))",
+    "dimension": "scalar",
+    "value": 0
+  },
+  {
+    "hash": "(x * x)",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "(x * 1)",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "(1 * x)",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "(1 * 1)",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((x + x) * (x + x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 16
+  },
+  {
+    "hash": "((x + x) * (1 + 1))",
+    "dimension": "scalar",
+    "value": 8
+  },
+  {
+    "hash": "((x + x) * (x * x))",
+    "dimension": "(scalar __*__ (scalar __*__ scalar))",
+    "value": 16
+  },
+  {
+    "hash": "((x + x) * (x * 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "((x + x) * (1 * x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "((x + x) * (1 * 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((x + x) * (x / 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "((x + x) * (1 / x))",
+    "dimension": "(scalar __*__ (_ __/__ scalar))",
+    "value": 2
+  },
+  {
+    "hash": "((x + x) * x)",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "(x * (x + x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "((x + x) * 1)",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "(1 * (x + x))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((1 + 1) * (x + x))",
+    "dimension": "scalar",
+    "value": 8
+  },
+  {
+    "hash": "((1 + 1) * (1 + 1))",
+    "dimension": "_",
+    "value": 4
+  },
+  {
+    "hash": "((1 + 1) * (x * x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "((1 + 1) * (x * 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((1 + 1) * (1 * x))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((1 + 1) * (1 * 1))",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "((1 + 1) * (x / 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((1 + 1) * (1 / x))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 1
+  },
+  {
+    "hash": "((1 + 1) * x)",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "(x * (1 + 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((1 + 1) * 1)",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "(1 * (1 + 1))",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "((x * x) * (x + x))",
+    "dimension": "((scalar __*__ scalar) __*__ scalar)",
+    "value": 16
+  },
+  {
+    "hash": "((x * x) * (1 + 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "((x * x) * (x * x))",
+    "dimension": "((scalar __*__ scalar) __*__ (scalar __*__ scalar))",
+    "value": 16
+  },
+  {
+    "hash": "((x * x) * (x * 1))",
+    "dimension": "((scalar __*__ scalar) __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "((x * x) * (1 * x))",
+    "dimension": "((scalar __*__ scalar) __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "((x * x) * (1 * 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((x * x) * (x / 1))",
+    "dimension": "((scalar __*__ scalar) __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "((x * x) * (1 / x))",
+    "dimension": "((scalar __*__ scalar) __*__ (_ __/__ scalar))",
+    "value": 2
+  },
+  {
+    "hash": "((x * x) * x)",
+    "dimension": "((scalar __*__ scalar) __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "(x * (x * x))",
+    "dimension": "(scalar __*__ (scalar __*__ scalar))",
+    "value": 8
+  },
+  {
+    "hash": "((x * x) * 1)",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "(1 * (x * x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((x * 1) * (x + x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "((x * 1) * (1 + 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((x * 1) * (x * x))",
+    "dimension": "(scalar __*__ (scalar __*__ scalar))",
+    "value": 8
+  },
+  {
+    "hash": "((x * 1) * (x * 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((x * 1) * (1 * x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((x * 1) * (1 * 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((x * 1) * (x / 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((x * 1) * (1 / x))",
+    "dimension": "(scalar __*__ (_ __/__ scalar))",
+    "value": 1
+  },
+  {
+    "hash": "((x * 1) * x)",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "(x * (x * 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((x * 1) * 1)",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "(1 * (x * 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((1 * x) * (x + x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "((1 * x) * (1 + 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((1 * x) * (x * x))",
+    "dimension": "(scalar __*__ (scalar __*__ scalar))",
+    "value": 8
+  },
+  {
+    "hash": "((1 * x) * (x * 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((1 * x) * (1 * x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((1 * x) * (1 * 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((1 * x) * (x / 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((1 * x) * (1 / x))",
+    "dimension": "(scalar __*__ (_ __/__ scalar))",
+    "value": 1
+  },
+  {
+    "hash": "((1 * x) * x)",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "(x * (1 * x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((1 * x) * 1)",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "(1 * (1 * x))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((1 * 1) * (x + x))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((1 * 1) * (1 + 1))",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "((1 * 1) * (x * x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((1 * 1) * (x * 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((1 * 1) * (1 * x))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((1 * 1) * (1 * 1))",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((1 * 1) * (x / 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((1 * 1) * (1 / x))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 * 1) * x)",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "(x * (1 * 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((1 * 1) * 1)",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "(1 * (1 * 1))",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((x / 1) * (x + x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 8
+  },
+  {
+    "hash": "((x / 1) * (1 + 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((x / 1) * (x * x))",
+    "dimension": "(scalar __*__ (scalar __*__ scalar))",
+    "value": 8
+  },
+  {
+    "hash": "((x / 1) * (x * 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((x / 1) * (1 * x))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((x / 1) * (1 * 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((x / 1) * (x / 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((x / 1) * (1 / x))",
+    "dimension": "(scalar __*__ (_ __/__ scalar))",
+    "value": 1
+  },
+  {
+    "hash": "((x / 1) * x)",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "(x * (x / 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((x / 1) * 1)",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "(1 * (x / 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((1 / x) * (x + x))",
+    "dimension": "((_ __/__ scalar) __*__ scalar)",
+    "value": 2
+  },
+  {
+    "hash": "((1 / x) * (1 + 1))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 1
+  },
+  {
+    "hash": "((1 / x) * (x * x))",
+    "dimension": "((_ __/__ scalar) __*__ (scalar __*__ scalar))",
+    "value": 2
+  },
+  {
+    "hash": "((1 / x) * (x * 1))",
+    "dimension": "((_ __/__ scalar) __*__ scalar)",
+    "value": 1
+  },
+  {
+    "hash": "((1 / x) * (1 * x))",
+    "dimension": "((_ __/__ scalar) __*__ scalar)",
+    "value": 1
+  },
+  {
+    "hash": "((1 / x) * (1 * 1))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 / x) * (x / 1))",
+    "dimension": "((_ __/__ scalar) __*__ scalar)",
+    "value": 1
+  },
+  {
+    "hash": "((1 / x) * (1 / x))",
+    "dimension": "((_ __/__ scalar) __*__ (_ __/__ scalar))",
+    "value": 0.25
+  },
+  {
+    "hash": "((1 / x) * x)",
+    "dimension": "((_ __/__ scalar) __*__ scalar)",
+    "value": 1
+  },
+  {
+    "hash": "(x * (1 / x))",
+    "dimension": "(scalar __*__ (_ __/__ scalar))",
+    "value": 1
+  },
+  {
+    "hash": "((1 / x) * 1)",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "(1 * (1 / x))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "(x / 1)",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "(1 / x)",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "((x + x) / (1 + 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((x + x) / (x * x))",
+    "dimension": "(scalar __/__ (scalar __*__ scalar))",
+    "value": 1
+  },
+  {
+    "hash": "((x + x) / (x * 1))",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "((x + x) / (1 * x))",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "((x + x) / (1 * 1))",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "((x + x) / (x / 1))",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "((x + x) / (1 / x))",
+    "dimension": "(scalar __/__ (_ __/__ scalar))",
+    "value": 8
+  },
+  {
+    "hash": "((x + x) / x)",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "(x / (x + x))",
+    "dimension": "_",
+    "value": 0.5
+  },
+  {
+    "hash": "((x + x) / 1)",
+    "dimension": "scalar",
+    "value": 4
+  },
+  {
+    "hash": "(1 / (x + x))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.25
+  },
+  {
+    "hash": "((1 + 1) / (x + x))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 + 1) / (x * x))",
+    "dimension": "(_ __/__ (scalar __*__ scalar))",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 + 1) / (x * 1))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 1
+  },
+  {
+    "hash": "((1 + 1) / (1 * x))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 1
+  },
+  {
+    "hash": "((1 + 1) / (1 * 1))",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "((1 + 1) / (x / 1))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 1
+  },
+  {
+    "hash": "((1 + 1) / (1 / x))",
+    "dimension": "(_ __/__ (_ __/__ scalar))",
+    "value": 4
+  },
+  {
+    "hash": "((1 + 1) / x)",
+    "dimension": "(_ __/__ scalar)",
+    "value": 1
+  },
+  {
+    "hash": "(x / (1 + 1))",
+    "dimension": "scalar",
+    "value": 1
+  },
+  {
+    "hash": "((1 + 1) / 1)",
+    "dimension": "_",
+    "value": 2
+  },
+  {
+    "hash": "(1 / (1 + 1))",
+    "dimension": "_",
+    "value": 0.5
+  },
+  {
+    "hash": "((x * x) / (x + x))",
+    "dimension": "((scalar __*__ scalar) __/__ scalar)",
+    "value": 1
+  },
+  {
+    "hash": "((x * x) / (1 + 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 2
+  },
+  {
+    "hash": "((x * x) / (x * 1))",
+    "dimension": "((scalar __*__ scalar) __/__ scalar)",
+    "value": 2
+  },
+  {
+    "hash": "((x * x) / (1 * x))",
+    "dimension": "((scalar __*__ scalar) __/__ scalar)",
+    "value": 2
+  },
+  {
+    "hash": "((x * x) / (1 * 1))",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "((x * x) / (x / 1))",
+    "dimension": "((scalar __*__ scalar) __/__ scalar)",
+    "value": 2
+  },
+  {
+    "hash": "((x * x) / (1 / x))",
+    "dimension": "((scalar __*__ scalar) __/__ (_ __/__ scalar))",
+    "value": 8
+  },
+  {
+    "hash": "((x * x) / x)",
+    "dimension": "((scalar __*__ scalar) __/__ scalar)",
+    "value": 2
+  },
+  {
+    "hash": "(x / (x * x))",
+    "dimension": "(scalar __/__ (scalar __*__ scalar))",
+    "value": 0.5
+  },
+  {
+    "hash": "((x * x) / 1)",
+    "dimension": "(scalar __*__ scalar)",
+    "value": 4
+  },
+  {
+    "hash": "(1 / (x * x))",
+    "dimension": "(_ __/__ (scalar __*__ scalar))",
+    "value": 0.25
+  },
+  {
+    "hash": "((x * 1) / (x + x))",
+    "dimension": "_",
+    "value": 0.5
+  },
+  {
+    "hash": "((x * 1) / (1 + 1))",
+    "dimension": "scalar",
+    "value": 1
+  },
+  {
+    "hash": "((x * 1) / (x * x))",
+    "dimension": "(scalar __/__ (scalar __*__ scalar))",
+    "value": 0.5
+  },
+  {
+    "hash": "((x * 1) / (1 * x))",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((x * 1) / (1 * 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((x * 1) / (x / 1))",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((x * 1) / (1 / x))",
+    "dimension": "(scalar __/__ (_ __/__ scalar))",
+    "value": 4
+  },
+  {
+    "hash": "((x * 1) / x)",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "(x / (x * 1))",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((x * 1) / 1)",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "(1 / (x * 1))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 * x) / (x + x))",
+    "dimension": "_",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 * x) / (1 + 1))",
+    "dimension": "scalar",
+    "value": 1
+  },
+  {
+    "hash": "((1 * x) / (x * x))",
+    "dimension": "(scalar __/__ (scalar __*__ scalar))",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 * x) / (x * 1))",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((1 * x) / (1 * 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((1 * x) / (x / 1))",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((1 * x) / (1 / x))",
+    "dimension": "(scalar __/__ (_ __/__ scalar))",
+    "value": 4
+  },
+  {
+    "hash": "((1 * x) / x)",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "(x / (1 * x))",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((1 * x) / 1)",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "(1 / (1 * x))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 * 1) / (x + x))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.25
+  },
+  {
+    "hash": "((1 * 1) / (1 + 1))",
+    "dimension": "_",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 * 1) / (x * x))",
+    "dimension": "(_ __/__ (scalar __*__ scalar))",
+    "value": 0.25
+  },
+  {
+    "hash": "((1 * 1) / (x * 1))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 * 1) / (1 * x))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 * 1) / (x / 1))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 * 1) / (1 / x))",
+    "dimension": "(_ __/__ (_ __/__ scalar))",
+    "value": 2
+  },
+  {
+    "hash": "((1 * 1) / x)",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "(x / (1 * 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((1 * 1) / 1)",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "(1 / (1 * 1))",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((x / 1) / (x + x))",
+    "dimension": "_",
+    "value": 0.5
+  },
+  {
+    "hash": "((x / 1) / (1 + 1))",
+    "dimension": "scalar",
+    "value": 1
+  },
+  {
+    "hash": "((x / 1) / (x * x))",
+    "dimension": "(scalar __/__ (scalar __*__ scalar))",
+    "value": 0.5
+  },
+  {
+    "hash": "((x / 1) / (x * 1))",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((x / 1) / (1 * x))",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((x / 1) / (1 * 1))",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "((x / 1) / (1 / x))",
+    "dimension": "(scalar __/__ (_ __/__ scalar))",
+    "value": 4
+  },
+  {
+    "hash": "((x / 1) / x)",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "(x / (x / 1))",
+    "dimension": "_",
+    "value": 1
+  },
+  {
+    "hash": "((x / 1) / 1)",
+    "dimension": "scalar",
+    "value": 2
+  },
+  {
+    "hash": "(1 / (x / 1))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 / x) / (x + x))",
+    "dimension": "((_ __/__ scalar) __/__ scalar)",
+    "value": 0.125
+  },
+  {
+    "hash": "((1 / x) / (1 + 1))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.25
+  },
+  {
+    "hash": "((1 / x) / (x * x))",
+    "dimension": "((_ __/__ scalar) __/__ (scalar __*__ scalar))",
+    "value": 0.125
+  },
+  {
+    "hash": "((1 / x) / (x * 1))",
+    "dimension": "((_ __/__ scalar) __/__ scalar)",
+    "value": 0.25
+  },
+  {
+    "hash": "((1 / x) / (1 * x))",
+    "dimension": "((_ __/__ scalar) __/__ scalar)",
+    "value": 0.25
+  },
+  {
+    "hash": "((1 / x) / (1 * 1))",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "((1 / x) / (x / 1))",
+    "dimension": "((_ __/__ scalar) __/__ scalar)",
+    "value": 0.25
+  },
+  {
+    "hash": "((1 / x) / x)",
+    "dimension": "((_ __/__ scalar) __/__ scalar)",
+    "value": 0.25
+  },
+  {
+    "hash": "(x / (1 / x))",
+    "dimension": "(scalar __/__ (_ __/__ scalar))",
+    "value": 4
+  },
+  {
+    "hash": "((1 / x) / 1)",
+    "dimension": "(_ __/__ scalar)",
+    "value": 0.5
+  },
+  {
+    "hash": "(1 / (1 / x))",
+    "dimension": "(_ __/__ (_ __/__ scalar))",
+    "value": 2
+  }
+]

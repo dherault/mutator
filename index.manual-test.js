@@ -1,14 +1,19 @@
 const fs = require('fs')
 const path = require('path')
-const mutator = require('./index4')
+const mutator = require('./index5')
 
 const results = mutator(
   [
     {
       name: 'x',
-      value: 1,
+      value: 2,
       dimension: 'scalar',
     },
+    {
+      name: '1',
+      value: 1,
+      dimension: mutator.dimensionLess,
+    }
     // {
     //   name: 'y',
     //   value: 2,
@@ -17,7 +22,7 @@ const results = mutator(
   ],
   mutator.dimensionLess,
   {
-    maxDepth: 4,
+    maxDepth: 2,
     noEval: true,
   }
 )
@@ -27,5 +32,5 @@ const results = mutator(
 // })
 // console.log('results', JSON.stringify(results, null, 2))
 // console.log('results', results)
-console.log('results', results)
+// console.log('results', results)
 fs.writeFileSync(path.resolve(__dirname, 'output.json'), JSON.stringify(results, null, 2), 'utf-8')
