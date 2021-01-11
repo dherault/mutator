@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.manual-test.js",
+    "dev": "/bin/bash -c \"ulimit -s 65500; exec /usr/local/bin/node --stack-size=65500 ./index.manual-test.js\"",
     "test": "jest"
   },
   "repository": {

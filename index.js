@@ -1,249 +1,235 @@
-const { create } = require("istanbul-reports")
+function isPrime(n) {
+  const sqrtN = Math.sqrt(n)
 
-const dimensionLess = '__'
+  for (var i = 2; i <= sqrtN; i++) {
+    if (n % i === 0) {
+      return false
+    }
+  }
+
+  return true
+}
+
+const primeNumbers = []
+
+// TODO use a generator for limitless prime generation
+for (let i = 2; i < 256; i++) {
+  if (isPrime(i)) {
+    primeNumbers.push(i)
+  }
+}
+
+let primeNumbersCursor = 0
+const dimensions = {}
+
+function assignDimension(name) {
+  if (dimensions[name]) return dimensions[name]
+  // if (primeNumbersCursor >= primeNumbers.length) throw new Error('Not enough prime numbers')
+
+  return dimensions[name] = primeNumbers[primeNumbersCursor++]
+}
+
+const dimensionLess = dimensions.dimensionLess = assignDimension('dimensionLess')
 
 function multiplyDimensions(dimA, dimB) {
   if (dimA === dimensionLess && dimB === dimensionLess) return dimensionLess
   if (dimA === dimensionLess) return dimB
   if (dimB === dimensionLess) return dimA
 
-  return `${dimA} __*__ ${dimB}`
+  return dimA * dimB
 }
 
 function divideDimensions(dimA, dimB) {
   if (dimA === dimB) return dimensionLess
+  if (dimB === dimensionLess) return dimA
 
-  return `${dimA} __/__ ${dimB}`
-}
-
-function simplifyDimensions(node) {
-  return node
+  return dimA / dimB
 }
 
 const operations = {
   addition: {
     name: 'addition',
     symbol: '+',
+    priority: 1,
     dimensionConditionFn: (dimA, dimB) => dimA === dimB,
     dimensionResultFn: dimA => dimA,
     resultFn: (a, b) => a + b,
     trivialityFn: () => false,
+    createPath: (inputA, inputB) => `(${inputA} + ${inputB})`,
   },
   soustraction: {
     name: 'soustraction',
     symbol: '-',
+    priority: 1,
     dimensionConditionFn: (dimA, dimB) => dimA === dimB,
     dimensionResultFn: dimA => dimA,
     resultFn: (a, b) => a - b,
-    trivialityFn: (inputA, inputB) => inputA.name === inputB.name,
+    trivialityFn: (hashA, hashB) => hashA === hashB,
+    createPath: (inputA, inputB) => `(${inputA} - ${inputB})`,
   },
   multiplication: {
     name: 'multiplication',
     symbol: '*',
+    priority: 2,
     dimensionConditionFn: () => true,
-    dimensionResultFn: (dimA, dimB) => multiplyDimensions(dimA, dimB),
+    dimensionResultFn: multiplyDimensions,
     resultFn: (a, b) => a * b,
     trivialityFn: () => false,
+    createPath: (inputA, inputB) => `(${inputA} * ${inputB})`,
   },
   division: {
     name: 'division',
     symbol: '/',
+    priority: 2,
     dimensionConditionFn: (dimA, dimB, a, b) => b !== 0,
-    dimensionResultFn: (dimA, dimB) => divideDimensions(dimA, dimB),
+    dimensionResultFn: divideDimensions,
     resultFn: (a, b) => a / b,
-    trivialityFn: (inputA, inputB) => inputA.name === inputB.name,
+    trivialityFn: (hashA, hashB) => hashA === hashB,
+    createPath: (inputA, inputB) => `(${inputA} / ${inputB})`,
   },
 }
 
-const initialInput = {
-  value: 'root',
-  dimension: dimensionLess,
-}
-
-const noop = {
-  name: 'noop',
-  symbol: 'noop',
-  dimensionConditionFn: () => false,
-  dimensionResultFn: () => null,
-  resultFn: () => null,
-  trivialityFn: () => false,
-}
+const rootNode = '__root__'
 
 function mutator(
   inputs,
-  endDimension, {
+  endDimension,
+  {
     allowedOperations = Object.values(operations),
     maxDepth = 3,
     noEval = false,
-  } = {}) {
-  // console.log('allowOperations', allowedOperations)
-  const tree = createTree(
-    initialInput,
-    noop,
-    inputs,
-    endDimension,
-    allowedOperations,
-    0,
-    maxDepth
-  )
+  } = {}
+) {
 
-  console.log('tree', JSON.stringify(tree, null, 2))
+  const tree = createOperationsTree({ node: rootNode }, allowedOperations, maxDepth)
+  const paths = createPaths(tree, inputs)
 
-  const paths = new Set()
-  let results = []
-
-  walkTree(tree, accumulate)
-  .flat()
-  .filter(accumulator => accumulator !== null)
-  .map(accumulator => simplifyDimensions(accumulator))
-  // .filter(accumulator => accumulator.dimension === endDimension)
-  .forEach(accumulator => {
-    if (paths.has(accumulator.path)) return
-
-    delete accumulator.dimension
-    delete accumulator.n
-
-    paths.add(accumulator.path)
-    results.push(accumulator)
-  })
-
-  results = results.map(accumulator => {
-    if (!noEval) {
-      accumulator.value = eval(replaceWithInputsValues(accumulator.path, inputs, allowedOperations))
-    }
-
-    return accumulator
-  })
-
-  return results
+  return paths
+  .filter(path => path.dimension === endDimension)
+  .map(({ hash, value }) => ({ path: hash, value }))
 }
 
-function createTree(node, operation, inputs, endDimension, allowedOperations, depth, maxDepth) {
-  const tree = {
-    node,
-    operation,
-    children: [],
-  }
-
+function createOperationsTree(tree, operations, maxDepth, depth = 0) {
   if (depth === maxDepth) return tree
 
-  inputs.forEach(input => {
-    if (operation.trivialityFn(node, input)) return
+  tree.children = []
 
-    tree.children.push(
-      createTree(
-        input,
-        noop,
-        inputs,
-        endDimension,
-        allowedOperations,
-        depth + 1,
-        maxDepth,
-      )
-    )
+  operations.forEach(operation => {
+    const childTree = { node: operation }
+
+    createOperationsTree(childTree, operations, maxDepth, depth + 1)
+
+    tree.children.push(childTree)
   })
-
-  if (depth < maxDepth - 1) {
-    inputs.forEach(input => {
-      allowedOperations.forEach(operation => {
-        if (operation.trivialityFn(node, input)) return
-
-        tree.children.push(
-          createTree(
-            input,
-            operation,
-            inputs,
-            endDimension,
-            allowedOperations,
-            depth + 1,
-            maxDepth,
-          )
-        )
-      })
-    })
-  }
-
 
   return tree
 }
 
-function walkTree(tree, fn) {
-  if (!tree.children.length) {
-    return {
-      value: tree.node.value,
-      dimension: tree.node.dimension,
-      path: tree.node.name,
+function createPaths(tree, inputs) {
+  reverseWalkTree(tree, childTree => {
+    childTree.paths = []
+
+    const operation = childTree.node
+
+    if (operation === rootNode) {
+      childTree.children.forEach(child => {
+        childTree.paths.push(...child.paths)
+      })
+
+      return
     }
-  }
 
-  const accumulators = tree.children.map(child => walkTree(child, fn)).flat()
+    inputs.forEach(input1 => {
+      inputs.forEach(input2 => {
+        if (operation.trivialityFn(input1.name, input2.name)) return
+        if (!operation.dimensionConditionFn(input1.dimension, input2.dimension, input1.value, input2.value)) return
 
-  return accumulators.map(accumulator => fn(tree.node, accumulator, tree.operation))
-}
-
-function accumulate(node, accumulators, operation) {
-  let accumulatorArray = accumulators
-
-  if (!Array.isArray(accumulators)) accumulatorArray = [accumulators]
-
-  return accumulatorArray.map(accumulator => {
-    if (accumulator === null) return accumulator
-    if (operation.name === 'noop') return accumulator
-    if (!operation.dimensionConditionFn(node.dimension, accumulator.dimension, node.value, accumulator.value)) return null
-
-    const accumulatorChildren = [
-      {
-        dimension: operation.dimensionResultFn(node.dimension, accumulator.dimension),
-        path: `${node.name} ${operation.symbol} ${accumulator.path}`,
-        n: accumulator.n || 0,
-      },
-      {
-        dimension: operation.dimensionResultFn(node.dimension, accumulator.dimension),
-        path: `(${node.name} ${operation.symbol} ${accumulator.path}`,
-        n: accumulator.n ? accumulator.n + 1 : 1,
-      }
-    ]
-
-    if (accumulator.n && accumulator.n > 0) {
-      accumulatorChildren.push(
-        {
-          dimension: operation.dimensionResultFn(node.dimension, accumulator.dimension),
-          path: `${node.name} ${operation.symbol} ${accumulator.path})`,
-          n: accumulator.n - 1,
-        },
-        {
-          dimension: operation.dimensionResultFn(node.dimension, accumulator.dimension),
-          path: `${node.name}) ${operation.symbol} ${accumulator.path}`,
-          n: accumulator.n - 1,
+        const path = {
+          a: input1,
+          b: input2,
+          dimension: operation.dimensionResultFn(input1.dimension, input2.dimension),
+          value: operation.resultFn(input1.value, input2.value),
         }
-      )
-    }
 
-    return accumulatorChildren
+        path.hash = hashPath(path, operation)
+
+        childTree.paths.push(path)
+      })
+    })
+
+    if (childTree.children) {
+      childTree.children.forEach(child1 => {
+        child1.paths.forEach(path1 => {
+          childTree.children.forEach(child2 => {
+            child2.paths.forEach(path2 => {
+              if (operation.trivialityFn(path1.hash, path2.hash)) return
+              if (!operation.dimensionConditionFn(path1.dimension, path2.dimension, path1.value, path2.value)) return
+
+              const path = {
+                a: path1,
+                b: path2,
+                dimension: operation.dimensionResultFn(path1.dimension, path2.dimension),
+                value: operation.resultFn(path1.value, path2.value),
+              }
+
+              path.hash = hashPath(path, operation)
+
+              childTree.paths.push(path)
+            })
+          })
+
+          inputs.forEach(input => {
+            if (operation.dimensionConditionFn(path1.dimension, input.dimension, path1.value, input.value)) {
+              const path = {
+                a: path1,
+                b: input,
+                dimension: operation.dimensionResultFn(path1.dimension, input.dimension),
+                value: operation.resultFn(path1.value, input.value),
+              }
+
+              path.hash = hashPath(path, operation)
+
+              childTree.paths.push(path)
+            }
+
+
+            if (operation.dimensionConditionFn(input.dimension, path1.dimension, input.value, path1.value)) {
+              const path = {
+                a: input,
+                b: path1,
+                dimension: operation.dimensionResultFn(input.dimension, path1.dimension),
+                value: operation.resultFn(input.value, path1.value),
+              }
+
+              path.hash = hashPath(path, operation)
+
+              childTree.paths.push(path)
+            }
+          })
+        })
+      })
+    }
   })
-  .flat()
+
+  return tree.paths
 }
 
-function replaceWithInputsValues(path, inputs, allowedOperations) {
-  return path
-  .split(' ')
-  .map(token => {
-    if (token === '(' || token === ')') return token
-    if (allowedOperations.find(operation => operation.symbol === token)) return token
+function reverseWalkTree(tree, fn) {
+  if (tree.children) tree.children.forEach(childTree => reverseWalkTree(childTree, fn))
 
-    const input = inputs.find(input => input.name === token)
+  fn(tree)
+}
 
-    if (input) return input.value
+function hashPath({ a, b }, operation) {
+  const left = a.hash || a.name
+  const right = b.hash || b.name
 
-    throw new Error('Unknown token') // TODO, check for spaces in inputs names and delete this line
-  })
-  .join(' ')
-
-
+  return operation.createPath(left, right)
 }
 
 Object.assign(mutator, {
   operations,
+  assignDimension,
   dimensionLess,
   multiplyDimensions,
   divideDimensions,

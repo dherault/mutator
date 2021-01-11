@@ -1,24 +1,24 @@
 const fs = require('fs')
 const path = require('path')
-const mutator = require('./index5')
+const mutator = require('.')
 
 const results = mutator(
   [
     {
-      name: 'x',
-      value: 2,
-      dimension: 'scalar',
-    },
-    {
       name: '1',
       value: 1,
       dimension: mutator.dimensionLess,
-    }
-    // {
-    //   name: 'y',
-    //   value: 2,
-    //   dimension: 'scalar',
-    // },
+    },
+    {
+      name: 'x',
+      value: 2,
+      dimension: mutator.assignDimension('scalar'),
+    },
+    {
+      name: 'y',
+      value: 3,
+      dimension: mutator.assignDimension('scalar'),
+    },
   ],
   mutator.dimensionLess,
   {
