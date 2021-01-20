@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+
 const mutator = require('.')
 
 // Remove x + x
@@ -36,7 +37,7 @@ const results = mutator(
   {
     maxDepth: 3,
     noEval: true,
-    dedupeValues: false,
+    dedupeValues: true,
   }
 )
 

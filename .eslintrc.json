@@ -2,7 +2,7 @@
   "extends": "dherault",
   "env": {
     "node": true,
-    "jest": true,
+    "jest": true
   },
   "rules": {
     "no-unused-vars": "warn",

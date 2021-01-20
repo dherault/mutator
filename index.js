@@ -63,11 +63,17 @@ function mutator(
 ) {
   const tree = createOperationsTree({ node: rootNode }, allowedOperations, maxDepth)
   const paths = createPaths(tree, inputs)
-
-  return paths
-  .filter((path, i, paths) => path.dimension === endDimension && !paths.some((p, j) => Math.abs(p.value - path.value) < 0.000000000001 && p.hash.length < path.hash.length))
+  let results = paths
+  .filter(path => path.dimension === endDimension)
   .map(({ hash, value }) => ({ path: removeParenthesis(hash), value }))
   .sort((a, b) => a.path.length < b.path.length ? -1 : 1)
+
+  if (dedupeValues) {
+    results = results
+    .filter((path, i, paths) => !paths.some((p, j) => i > j && Math.abs(p.value - path.value) < 0.0000000001))
+  }
+
+  return results
 }
 
 function createOperationsTree(tree, operations, maxDepth, depth = 0) {
@@ -141,7 +147,7 @@ function createPaths(tree, inputs) {
             })
           })
 
-          inputs.forEach((input) => {
+          inputs.forEach(input => {
             if (
               operation.dimensionConditionFn(path1.dimension, input.dimension, path1.value, input.value)
               && !operation.trivialityFn(path1.hash, input.name)
@@ -157,7 +163,6 @@ function createPaths(tree, inputs) {
 
               childTree.paths.push(path)
             }
-
 
             if (
               operation.dimensionConditionFn(input.dimension, path1.dimension, input.value, path1.value)
@@ -184,24 +189,6 @@ function createPaths(tree, inputs) {
   return tree.paths
 }
 
-// function checkInputsIndependency(inputs) {
-//   const valuesByDimension = {}
-
-//   for (const input of inputs) {
-//     if (!valuesByDimension[input.dimension]) {
-//       valuesByDimension[input.dimension] = [input.value]
-//     }
-//     else if (valuesByDimension[input.dimension].some(value => value === input.value)) {
-//       return false
-//     }
-//     else {
-//       valuesByDimension[input.dimension].push(input.value)
-//     }
-//   }
-
-//   return true
-// }
-
 function reverseWalkTree(tree, fn) {
   if (tree.children) tree.children.forEach(childTree => reverseWalkTree(childTree, fn))
 
@@ -223,7 +210,7 @@ function removeParenthesis(hash) {
 function isPrime(n) {
   const sqrtN = Math.sqrt(n)
 
-  for (var i = 2; i <= sqrtN; i++) {
+  for (let i = 2; i <= sqrtN; i++) {
     if (n % i === 0) {
       return false
     }
