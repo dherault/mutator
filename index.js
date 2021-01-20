@@ -1,56 +1,16 @@
-function isPrime(n) {
-  const sqrtN = Math.sqrt(n)
+const dimensions = { dimensionLess: 1 }
+const rootNode = '__root__'
+const primesSequence = primes()
 
-  for (var i = 2; i <= sqrtN; i++) {
-    if (n % i === 0) {
-      return false
-    }
-  }
-
-  return true
-}
-
-const primeNumbers = []
-
-// TODO use a generator for limitless prime generation
-for (let i = 2; i < 256; i++) {
-  if (isPrime(i)) {
-    primeNumbers.push(i)
-  }
-}
-
-let primeNumbersCursor = 0
-const dimensions = {}
-
-function assignDimension(name) {
-  if (dimensions[name]) return dimensions[name]
-  // if (primeNumbersCursor >= primeNumbers.length) throw new Error('Not enough prime numbers')
-
-  return dimensions[name] = primeNumbers[primeNumbersCursor++]
-}
-
-const dimensionLess = dimensions.dimensionLess = assignDimension('dimensionLess')
-
-function multiplyDimensions(dimA, dimB) {
-  if (dimA === dimensionLess && dimB === dimensionLess) return dimensionLess
-  if (dimA === dimensionLess) return dimB
-  if (dimB === dimensionLess) return dimA
-
-  return dimA * dimB
-}
-
-function divideDimensions(dimA, dimB) {
-  if (dimA === dimB) return dimensionLess
-  if (dimB === dimensionLess) return dimA
-
-  return dimA / dimB
-}
+const multiplyDimensions = (dimA, dimB) => dimA * dimB
+const divideDimensions = (dimA, dimB) => dimA / dimB
 
 const operations = {
   addition: {
     name: 'addition',
     symbol: '+',
     priority: 1,
+    reverse: false,
     dimensionConditionFn: (dimA, dimB) => dimA === dimB,
     dimensionResultFn: dimA => dimA,
     resultFn: (a, b) => a + b,
@@ -61,6 +21,7 @@ const operations = {
     name: 'soustraction',
     symbol: '-',
     priority: 1,
+    reverse: true,
     dimensionConditionFn: (dimA, dimB) => dimA === dimB,
     dimensionResultFn: dimA => dimA,
     resultFn: (a, b) => a - b,
@@ -71,25 +32,25 @@ const operations = {
     name: 'multiplication',
     symbol: '*',
     priority: 2,
+    reverse: false,
     dimensionConditionFn: () => true,
     dimensionResultFn: multiplyDimensions,
     resultFn: (a, b) => a * b,
-    trivialityFn: () => false,
+    trivialityFn: (hashA, hashB) => hashA === '1' || hashB === '1',
     createPath: (inputA, inputB) => `(${inputA} * ${inputB})`,
   },
   division: {
     name: 'division',
     symbol: '/',
     priority: 2,
+    reverse: true,
     dimensionConditionFn: (dimA, dimB, a, b) => b !== 0,
     dimensionResultFn: divideDimensions,
     resultFn: (a, b) => a / b,
-    trivialityFn: (hashA, hashB) => hashA === hashB,
+    trivialityFn: (hashA, hashB) => hashA === hashB || hashB === '1',
     createPath: (inputA, inputB) => `(${inputA} / ${inputB})`,
   },
 }
-
-const rootNode = '__root__'
 
 function mutator(
   inputs,
@@ -97,16 +58,16 @@ function mutator(
   {
     allowedOperations = Object.values(operations),
     maxDepth = 3,
-    noEval = false,
+    dedupeValues = false,
   } = {}
 ) {
-
   const tree = createOperationsTree({ node: rootNode }, allowedOperations, maxDepth)
   const paths = createPaths(tree, inputs)
 
   return paths
-  .filter(path => path.dimension === endDimension)
-  .map(({ hash, value }) => ({ path: hash, value }))
+  .filter((path, i, paths) => path.dimension === endDimension && !paths.some((p, j) => Math.abs(p.value - path.value) < 0.000000000001 && p.hash.length < path.hash.length))
+  .map(({ hash, value }) => ({ path: removeParenthesis(hash), value }))
+  .sort((a, b) => a.path.length < b.path.length ? -1 : 1)
 }
 
 function createOperationsTree(tree, operations, maxDepth, depth = 0) {
@@ -139,10 +100,11 @@ function createPaths(tree, inputs) {
       return
     }
 
-    inputs.forEach(input1 => {
-      inputs.forEach(input2 => {
+    inputs.forEach((input1, i) => {
+      inputs.forEach((input2, j) => {
         if (operation.trivialityFn(input1.name, input2.name)) return
         if (!operation.dimensionConditionFn(input1.dimension, input2.dimension, input1.value, input2.value)) return
+        if (!operation.reverse && i > j) return
 
         const path = {
           a: input1,
@@ -159,11 +121,12 @@ function createPaths(tree, inputs) {
 
     if (childTree.children) {
       childTree.children.forEach(child1 => {
-        child1.paths.forEach(path1 => {
+        child1.paths.forEach((path1, i) => {
           childTree.children.forEach(child2 => {
-            child2.paths.forEach(path2 => {
+            child2.paths.forEach((path2, j) => {
               if (operation.trivialityFn(path1.hash, path2.hash)) return
               if (!operation.dimensionConditionFn(path1.dimension, path2.dimension, path1.value, path2.value)) return
+              if (!operation.reverse && i > j) return
 
               const path = {
                 a: path1,
@@ -178,8 +141,11 @@ function createPaths(tree, inputs) {
             })
           })
 
-          inputs.forEach(input => {
-            if (operation.dimensionConditionFn(path1.dimension, input.dimension, path1.value, input.value)) {
+          inputs.forEach((input) => {
+            if (
+              operation.dimensionConditionFn(path1.dimension, input.dimension, path1.value, input.value)
+              && !operation.trivialityFn(path1.hash, input.name)
+            ) {
               const path = {
                 a: path1,
                 b: input,
@@ -193,7 +159,11 @@ function createPaths(tree, inputs) {
             }
 
 
-            if (operation.dimensionConditionFn(input.dimension, path1.dimension, input.value, path1.value)) {
+            if (
+              operation.dimensionConditionFn(input.dimension, path1.dimension, input.value, path1.value)
+              && !operation.trivialityFn(input.name, path1.hash)
+              && operation.reverse
+            ) {
               const path = {
                 a: input,
                 b: path1,
@@ -214,6 +184,24 @@ function createPaths(tree, inputs) {
   return tree.paths
 }
 
+// function checkInputsIndependency(inputs) {
+//   const valuesByDimension = {}
+
+//   for (const input of inputs) {
+//     if (!valuesByDimension[input.dimension]) {
+//       valuesByDimension[input.dimension] = [input.value]
+//     }
+//     else if (valuesByDimension[input.dimension].some(value => value === input.value)) {
+//       return false
+//     }
+//     else {
+//       valuesByDimension[input.dimension].push(input.value)
+//     }
+//   }
+
+//   return true
+// }
+
 function reverseWalkTree(tree, fn) {
   if (tree.children) tree.children.forEach(childTree => reverseWalkTree(childTree, fn))
 
@@ -227,10 +215,45 @@ function hashPath({ a, b }, operation) {
   return operation.createPath(left, right)
 }
 
+function removeParenthesis(hash) {
+  return hash.slice(1, hash.length - 1)
+
+}
+
+function isPrime(n) {
+  const sqrtN = Math.sqrt(n)
+
+  for (var i = 2; i <= sqrtN; i++) {
+    if (n % i === 0) {
+      return false
+    }
+  }
+
+  return true
+}
+
+function* primes() {
+  let n = 2
+
+  while (true) {
+    if (isPrime(n)) {
+      yield n
+    }
+
+    n++
+  }
+}
+
+function assignDimension(name) {
+  if (dimensions[name]) return dimensions[name]
+
+  return dimensions[name] = primesSequence.next().value
+}
+
 Object.assign(mutator, {
   operations,
   assignDimension,
-  dimensionLess,
+  dimensions,
   multiplyDimensions,
   divideDimensions,
 })

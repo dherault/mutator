@@ -2,35 +2,43 @@ const fs = require('fs')
 const path = require('path')
 const mutator = require('.')
 
+// Remove x + x
+mutator.operations.addition.trivialityFn = (hashA, hashB) => hashA === hashB
+
+const scalar = mutator.assignDimension('scalar')
+const time = mutator.assignDimension('time')
+
 const results = mutator(
   [
-    {
-      name: '1',
-      value: 1,
-      dimension: mutator.dimensionLess,
-    },
+    // {
+    //   name: '1',
+    //   value: 1,
+    //   dimension: mutator.dimensions.dimensionLess,
+    // },
     {
       name: 'x',
-      value: 2,
-      dimension: mutator.assignDimension('scalar'),
+      value: 3.141592,
+      dimension: scalar,
     },
     {
       name: 'y',
-      value: 3,
-      dimension: mutator.assignDimension('scalar'),
+      value: 1.618,
+      dimension: scalar,
+    },
+    {
+      name: 't',
+      value: 100,
+      dimension: time,
     },
   ],
-  mutator.dimensionLess,
+  // mutator.dimensions.dimensionLess,
+  mutator.divideDimensions(scalar, time),
   {
-    maxDepth: 2,
+    maxDepth: 3,
     noEval: true,
+    dedupeValues: false,
   }
 )
 
-// results.forEach(path => {
-//   if (path.startsWith('( x - 1 )')) console.log(path)
-// })
-// console.log('results', JSON.stringify(results, null, 2))
-// console.log('results', results)
 // console.log('results', results)
 fs.writeFileSync(path.resolve(__dirname, 'output.json'), JSON.stringify(results, null, 2), 'utf-8')
